@@ -1,0 +1,101 @@
+*** Settings ***
+Library    SeleniumLibrary  
+
+*** Variables ***
+${URL}         chttps://*************************
+${EMAIL}       *****************************
+${SENHA_ADM}   **********  
+${CPF}        00100200345
+${SENHA_NOVO_CADASTRO}    *******
+
+*** Keywords ***
+Abrir o navegador    
+    Open Browser    browser=Chrome
+    Maximize Browser Window
+Fechar o navegador
+    Capture Page Screenshot
+    Close Browser
+
+    # Caso de teste 01: Cadastrar um novo usuário com sucesso
+Acessar a home page do site QaCoders
+    Go To    url=${URL} 
+    Wait Until Element Is Visible    locator=//h3[contains(.,'Login')]
+Digitar email válido 
+    Input Text    locator=email   text=${EMAIL}
+Digitar senha válida
+    Input Text    locator=password     text=${SENHA_ADM}  
+Clicar em Entrar 
+    Click Element    locator=login
+    Wait Until Element Is Visible    locator=//span[@class='MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-yb0lig'][contains(.,'Cadastros')]    
+Clicar no menu Cadastros
+    Click Element    locator=//span[@class='MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-yb0lig'][contains(.,'Cadastros')]
+Clicar no menu Usuarios
+    Click Element    locator=//span[@class='MuiTypography-root MuiTypography-body1 MuiListItemText-primary css-yb0lig'][contains(.,'Usuários')]
+    Wait Until Element Is Visible    locator=//button[@class='css-fvzsut'][contains(.,'Novo Cadastro')]
+Clicar no botão Novo cadastro
+    Click Element    locator=//button[@class='css-fvzsut'][contains(.,'Novo Cadastro')]
+Inserir nome completo
+    Click Element    locator=fullName
+    Input Text    locator=fullName    text= **************************
+Inserir email    
+    Click Element    locator=mail
+    Input Text    locator=mail    text=*************
+Inserir Perfil de Acesso
+    Click Element    locator=//input[contains(@name,'accessProfile')]
+    Input Text    locator=//input[contains(@name,'accessProfile')]    text= ADMIN
+ Inserir CPF
+     Click Element    locator=//input[contains(@name,'cpf')]
+     Input Text    locator=//input[contains(@name,'cpf')]    text=${CPF}
+Inserir Senha
+    Click Element    locator=//input[contains(@name,'password')]
+    Input Password    locator=//input[contains(@name,'password')]   password=${SENHA_NOVO_CADASTRO}
+
+Confirmar a senha
+    Click Element    locator=//input[contains(@name,'confirmPassword')]
+    Input Text    locator=//input[contains(@name,'confirmPassword')]    text=${SENHA_NOVO_CADASTRO} 
+Salvar novo usuario
+    Click Element    locator=save
+
+
+    #Caso de teste 02: Cadastrar novo usuário sem sucesso- Nome com iniciais minúsculas
+
+Inserir nome completo em letras minusculas
+     Click Element    locator=fullName
+    Input Text    locator=fullName    text= *****************************
+ Verificar mensagem de erro de nome fora dos critérios de aceite
+    Wait Until Element Is Visible    locator=//div[@class='MuiAlert-message css-1xsto0d'][contains(.,'Informe o nome e sobrenome com as iniciais em letra maiúscula e sem caracteres especiais.')]
+
+#Caso de teste 03: Cadastrar novo usuário sem sucesso- Email fora dos critério de aceite
+
+Inserir email sem @ 
+    Click Element    locator=mail
+    Input Text    locator=mail    text=Cadastrotesteqacoders.com
+Verificar Mensagem de erro de email
+    Wait Until Element Is Visible    locator=//p[@class='css-bbipig'][contains(.,'Email inválido')]
+
+    #Caso de teste 04: Cadastrar novo usuário sem sucesso- CPF com 12 dígitos
+
+Inserir CPF com 12 dígitos
+     Click Element    locator=//input[contains(@name,'cpf')]
+     Input Text    locator=//input[contains(@name,'cpf')]    text=001025478964
+Verificar Mensagem de erro
+    Wait Until Element Is Visible    locator=//div[@class='MuiAlert-message css-1xsto0d'][contains(.,'Deve preencher o CPF com 11 dígitos')]
+
+    #Caso de teste 05: Cadastrar novo usuário sem sucesso- Senha fora dos critérios de aceite
+
+Inserir Senha fora dos critérios de aceite
+     Click Element    locator=//input[contains(@name,'password')]
+    Input Password    locator=//input[contains(@name,'password')]   password=teste@
+Confirmar a senha fora dos critérios de aceite
+    Click Element    locator=//input[contains(@name,'confirmPassword')]
+    Input Text    locator=//input[contains(@name,'confirmPassword')]    text=teste@
+Verificar Mensagem de erro de senha fora dos critérios de aceite
+    Wait Until Element Is Visible    locator=//div[@class='MuiAlert-message css-1xsto0d'][contains(.,'Senha precisa ter: uma letra maiúscula, uma letra minúscula, um número, um caractere especial(@#$%) e tamanho entre 8-12.')]
+
+    #Caso de teste 06: Cadastrar novo usuário sem sucesso- Senhas não conferem
+
+Confirmar com senha diferente
+    Click Element    locator=//input[contains(@name,'confirmPassword')]
+    Input Text    locator=//input[contains(@name,'confirmPassword')]    text=*********
+Verificar mensagem de erro que as senhas não conferem
+    Wait Until Element Is Visible    locator= //div[@class='MuiAlert-message css-1xsto0d'][contains(.,'As senhas não conferem.')] 
